@@ -28,4 +28,8 @@ learn more
 hop into a subdirectory and see the associated README.md for more info.
 
 
-
+commands
+--------
+./test/runner/test.py units file
+./test/runner/test.py units -e file
+sudo ./test.py integration file
