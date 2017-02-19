@@ -592,7 +592,7 @@ def command_integration_role(args, target, start_at_task):
         cwd = 'test/integration'
 
         env['ANSIBLE_ROLES_PATH'] = os.path.abspath('test/integration/targets')
-        env['ANSIBLE_NOCOWS']     = "1"
+        env['ANSIBLE_NOCOWS'] = "1"
 
         intercept_command(args, cmd, env=env, cwd=cwd)
 
