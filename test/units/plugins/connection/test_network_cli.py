@@ -45,7 +45,6 @@ class TestConnectionClass(unittest.TestCase):
         conn.ssh = None
 
         self.assertRaises(AnsibleConnectionFailure, conn._connect)
-        #mocked_terminal_loader.all.assert_called_with(class_only=True)
 
         mocked_terminal_loader.reset_mock()
         mocked_terminal_loader.get.return_value = None

@@ -597,6 +597,10 @@ class PlayContext(Base):
                 if 'become' in prop:
                     continue
 
+                # perserves the user var for local connections
+                if self.connection == 'local' and 'remote_user' in prop:
+                    continue
+
                 var_val = getattr(self, prop)
                 for var_opt in var_list:
                     if var_opt not in variables and var_val is not None:

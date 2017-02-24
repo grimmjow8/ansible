@@ -235,7 +235,7 @@ def get_running_config(module):
         if module.params['defaults']:
             flags.append('all')
         contents = get_config(module, flags=flags)
-    return NetworkConfig(indent=1, contents=contents)
+    return NetworkConfig(indent=2, contents=contents)
 
 def get_candidate(module):
     candidate = NetworkConfig(indent=2)
@@ -332,7 +332,8 @@ def main():
 
     if module.params['save']:
         if not module.check_mode:
-            run_commands(module, ['copy running-config startup-config'])
+            cmd = {'command': 'copy running-config startup-config', 'output': 'text'}
+            run_commands(module, [cmd])
         result['changed'] = True
 
     module.exit_json(**result)

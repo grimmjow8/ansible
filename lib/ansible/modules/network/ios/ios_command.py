@@ -148,7 +148,7 @@ def parse_commands(module, warnings):
     command = ComplexList(dict(
         command=dict(key=True),
         prompt=dict(),
-        response=dict()
+        answer=dict()
     ), module)
     commands = command(module.params['commands'])
     for index, item in enumerate(commands):
@@ -168,7 +168,6 @@ def main():
     """main entry point for module execution
     """
     argument_spec = dict(
-        # { command: <str>, prompt: <str>, response: <str> }
         commands=dict(type='list', required=True),
 
         wait_for=dict(type='list', aliases=['waitfor']),

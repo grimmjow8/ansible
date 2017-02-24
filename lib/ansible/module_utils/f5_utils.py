@@ -140,9 +140,16 @@ def fq_list_names(partition,list_names):
 
 # New style
 
+from abc import ABCMeta, abstractproperty
+from ansible.module_utils.six import with_metaclass
+from collections import defaultdict
+
 try:
     from f5.bigip import ManagementRoot as BigIpMgmt
+    from f5.bigip.contexts import TransactionContextManager as BigIpTxContext
+
     from f5.bigiq import ManagementRoot as BigIqMgmt
+
     from f5.iworkflow import ManagementRoot as iWorkflowMgmt
     from icontrol.session import iControlUnexpectedHTTPError
     HAS_F5SDK = True
@@ -199,7 +206,8 @@ F5_COMMON_ARGS = dict(
 class AnsibleF5Client(object):
     def __init__(self, argument_spec=None, supports_check_mode=False,
                  mutually_exclusive=None, required_together=None,
-                 required_if=None, f5_product_name='bigip'):
+                 required_if=None, required_one_of=None,
+                 f5_product_name='bigip'):
 
         merged_arg_spec = dict()
         merged_arg_spec.update(F5_COMMON_ARGS)
@@ -220,7 +228,8 @@ class AnsibleF5Client(object):
             supports_check_mode=supports_check_mode,
             mutually_exclusive=mutually_exclusive_params,
             required_together=required_together_params,
-            required_if=required_if
+            required_if=required_if,
+            required_one_of=required_one_of
         )
 
         self.check_mode = self.module.check_mode
@@ -273,53 +282,64 @@ class AnsibleF5Client(object):
             )
 
 
-class AnsibleF5Parameters(object):
+class AnsibleF5Parameters(with_metaclass(ABCMeta, object)):
     def __init__(self, params=None):
-        self._partition = None
-        if params is None:
-            return
-        for key, value in iteritems(params):
-            setattr(self, key, value)
+        self._values = defaultdict(lambda: None)
+        if params:
+            for k in params:
+                self._values[k] = params[k]
+
+    @abstractproperty
+    def param_api_map(self):
+        """Dict used to map module parameters to API parameters"""
+        pass
 
     @property
     def partition(self):
-        if self._partition is None:
+        if self._values['partition'] is None:
             return 'Common'
-        return self._partition.strip('/')
+        return self._values['partition'].strip('/')
 
     @partition.setter
     def partition(self, value):
-        self._partition = value
+        self._values['partition'] = value
 
     @classmethod
     def from_api(cls, params):
+        """Create Parameters instance from values return by the API
+
+        The API returns values found on the "values" side of the
+        param_api_map dictionary. These need to be mapped to the names
+        of keys expected by the Parameters class (the "key" side of
+        the param_api_map dictionary)
+
+        :param params:
+        :return:
+        """
         for key,value in iteritems(cls.param_api_map):
             params[key] = params.pop(value, None)
         p = cls(params)
         return p
 
     def __getattr__(self, item):
-        return None
+        return self._values[item]
 
     def api_params(self):
-        result = self._api_params_from_map()
-        return self._filter_none(result)
-
-    def _filter_none(self, params):
-        result = dict()
-        for k, v in iteritems(params):
-            if v is None:
-                continue
-            result[k] = v
-        return result
+        return self._filter_params(self._api_params_from_map())
 
     def _api_params_from_map(self):
         result = dict()
-        pmap = self.__class__.param_api_map
-        for k,v in iteritems(pmap):
+        for k,v in iteritems(self.param_api_map):
             value = getattr(self, k)
             result[v] = value
         return result
+
+    def to_return(self):
+        result = self._values
+        return self._filter_params(result)
+
+    def _filter_params(self, params):
+        return dict((k, v) for k, v in iteritems(params) if v is not None)
 
 
 class F5ModuleError(Exception):

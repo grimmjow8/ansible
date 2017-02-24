@@ -96,6 +96,8 @@ Ansible Changes By Release
 - foreman:
   * foreman
   * katello
+- fortios
+  * fortios_config
 - gconftool2
 - google
   * gce_eip
@@ -233,9 +235,12 @@ Ansible Changes By Release
   * tower_group
   * tower_host
   * tower_inventory
-  * tower_label.py
+  * tower_job_template
+  * tower_label
   * tower_organization
   * tower_project
+  * tower_role
+  * tower_team
   * tower_user
 - vmware:
   * vmware_guest_facts
@@ -247,8 +252,10 @@ Ansible Changes By Release
   * win_path
   * win_psexec
   * win_reg_stat
+  * win_region
   * win_say
   * win_shortcut
+  * win_tempfile
 - xbps
 - zfs:
   * zfs_facts
@@ -261,6 +268,11 @@ Ansible Changes By Release
 ####New: lookups
 
 * keyring: allows getting password from system keyrings
+
+####New: cache
+
+* pickle (uses python's own serializer)
+* yaml
 
 
 ## 2.2.1 "The Battle of Evermore" - 2017-01-16
@@ -3105,4 +3117,3 @@ in kickstarts
 ## 0.0.2 and 0.0.1
 
 * Initial stages of project
-

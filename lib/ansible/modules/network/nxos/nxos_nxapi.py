@@ -192,20 +192,23 @@ def map_obj_to_commands(updates, module):
 def parse_http(data):
     match = re.search('HTTP Port:\s+(\d+)', data, re.M)
     if match:
-        return {'http': True, 'http_port': match.group(1)}
+        return {'http': True, 'http_port': int(match.group(1))}
     else:
         return {'http': False, 'http_port': None}
 
 def parse_https(data):
     match = re.search('HTTPS Port:\s+(\d+)', data, re.M)
     if match:
-        return {'https': True, 'https_port': match.group(1)}
+        return {'https': True, 'https_port': int(match.group(1))}
     else:
         return {'https': False, 'https_port': None}
 
 def parse_sandbox(data):
     match = re.search('Sandbox:\s+(.+)$', data, re.M)
-    return {'sandbox': match.group(1) == 'Enabled'}
+    value = None
+    if match:
+        value = match.group(1) == 'Enabled'
+    return {'sandbox': value}
 
 def map_config_to_obj(module):
     out = run_commands(module, ['show nxapi'], check_rc=False)

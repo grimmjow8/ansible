@@ -72,9 +72,9 @@ def get_connection(module):
     global _DEVICE_CONNECTION
     if not _DEVICE_CONNECTION:
         load_params(module)
-        if 'transport' not in module.params:
-            conn = Cli(module)
-        elif module.params['transport'] == 'nxapi':
+        transport = module.params['transport']
+        provider_transport = (module.params['provider'] or {}).get('transport')
+        if 'nxapi' in (transport, provider_transport):
             conn = Nxapi(module)
         else:
             conn = Cli(module)
@@ -332,7 +332,7 @@ def to_command(module, commands):
         command=dict(key=True),
         output=dict(default=default_output),
         prompt=dict(),
-        response=dict()
+        answer=dict()
     ), module)
 
     commands = transform(to_list(commands))

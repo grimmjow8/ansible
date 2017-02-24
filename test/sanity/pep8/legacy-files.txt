@@ -182,7 +182,6 @@ lib/ansible/modules/packaging/os/opkg.py
 lib/ansible/modules/packaging/os/pacman.py
 lib/ansible/modules/packaging/os/rhn_register.py
 lib/ansible/modules/packaging/os/swdepot.py
-lib/ansible/modules/packaging/os/yum.py
 lib/ansible/modules/packaging/os/zypper.py
 lib/ansible/modules/source_control/github_hooks.py
 lib/ansible/modules/storage/netapp/netapp_e_amg.py
@@ -244,7 +243,6 @@ lib/ansible/playbook/role/metadata.py
 lib/ansible/plugins/action/set_fact.py
 lib/ansible/plugins/action/set_stats.py
 lib/ansible/plugins/action/synchronize.py
-lib/ansible/plugins/cache/jsonfile.py
 lib/ansible/plugins/callback/default.py
 lib/ansible/plugins/callback/logentries.py
 lib/ansible/plugins/callback/oneline.py
